@@ -12,6 +12,12 @@ module ShopifyAPI
 
     module RequestNotification
       def request(method, path, *arguments)
+        # ---------
+        # temporary dirty fix to allow saving products
+        if arguments&.first&.include?("\"inventory_quantity\"")
+          arguments.first.gsub!(/\"inventory_quantity\":[0-9]+,/, "")
+        end
+        # ---------
         super.tap do |response|
           notify_about_request(response, arguments)
         end
